@@ -23,32 +23,38 @@ server.bind((IP, PORT))
 server.listen(100)
 clients = {}
 
+# Creates a new thread for each client in the chat room
 def clientthread(connection, address):
     connection.send("Welcome to this chatroom, {}! Type '*help' to see more options.".format(get_user(connection)))
-    #sends a message to the client whose user object is conn
+    # Sends a message to the client whose user object is connection
     while True:
             try:
                 message = connection.recv(2048)
                 if message:
+                    # Help command
                     if message[0:len(message)-1] == "*help":
                         print("help")
                         help(connection)
+                    # Private message
                     elif message[0] == "@":
                         print("private message")
                         private_message(get_user(connection), message)
+                    # Query user list
                     elif message[0:len(message)-1] == "*users":
                         print("user list")
                         user_list(connection)
+                    # Exit command. Can also be done with ctrl + C
                     elif message[0:len(message)-1] == "*exit":
                         exit_client(connection)
+                    # No keyword found. Send message to everyone in chat room
                     else:
                         broadcast(connection, message)
-                    #prints the message and address of the user who just sent the message on the server terminal
                 else:
                     remove(connection)
             except:
                 continue
 
+# Send the message to everyone
 def broadcast(connection, message):
     message_final = "<" + get_user(connection) + "> " + message
     for client in clients.keys():
@@ -59,6 +65,7 @@ def broadcast(connection, message):
                 client.close()
                 remove(client)
 
+# Send the message to one specified recipient
 def private_message(connection, message):
     # Construct username to send message to
     recipient_name = ""
@@ -78,6 +85,7 @@ def private_message(connection, message):
     except:
         connection.send("User does not exist.")
 
+# Sends help directions
 def help(connection):
     try:
         connection.send(help_message)
@@ -85,6 +93,7 @@ def help(connection):
         connection.close()
         remove(connection)
 
+# Sends active users list
 def user_list(connection):
     i = 1
     users = "User List:\n"
@@ -97,13 +106,16 @@ def user_list(connection):
         connection.close()
         remove(connection)
 
+# Formal method for client exit. Can also do ctrl + C
 def exit_client(connection):
     connection.close()
     remove(connection)
 
+# Removes client from dictionary
 def remove(connection):
     del clients[connection]
 
+# Returns username
 def get_user(connection):
     return clients[connection]
 
@@ -112,7 +124,7 @@ while True:
     connection, address = server.accept()
     # Immediately accept username
     username = connection.recv(2048)
-    # Append to list of clients
+    # Add to dictionary
     clients[connection] = username
     print(username + " connected")
     # Creates a new thread for every player that connects
