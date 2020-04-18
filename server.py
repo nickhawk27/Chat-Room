@@ -83,7 +83,7 @@ def private_message(connection, message):
             recipient = connection
             break
     # Construct message for delivery
-    direct_message = "<{}> (Private Message) {}".format(username, message[i+1:len(message)-1])
+    direct_message = "<{}> (Private Message) {}".format(get_user(connection), message[i+1:len(message)-1])
     try:
         recipient.send(direct_message)
     except:
