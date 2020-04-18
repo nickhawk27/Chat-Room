@@ -39,7 +39,7 @@ def clientthread(connection, address):
                     # Private message
                     elif message[0] == "@":
                         print("private message")
-                        private_message(get_user(connection), message)
+                        private_message(connection, message)
                     # Query user list
                     elif message[0:len(message)-1] == "*users":
                         print("user list")
