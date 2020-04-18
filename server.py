@@ -29,6 +29,7 @@ def clientthread(connection, address):
     # Sends a message to the client whose user object is connection
     while True:
             try:
+                # Receives message from client
                 message = connection.recv(2048)
                 if message:
                     # Help command
@@ -56,8 +57,10 @@ def clientthread(connection, address):
 
 # Send the message to everyone
 def broadcast(connection, message):
+    # Construct final message
     message_final = "<" + get_user(connection) + "> " + message
     for client in clients.keys():
+        # Send it to all clients apart from sender
         if client != connection:
             try:
                 client.send(message_final)
@@ -79,6 +82,7 @@ def private_message(connection, message):
         if username == recipient_name:
             recipient = connection
             break
+    # Construct message for delivery
     direct_message = "<{}> (Private Message) {}".format(username, message[i+1:len(message)-1])
     try:
         recipient.send(direct_message)
@@ -95,6 +99,7 @@ def help(connection):
 
 # Sends active users list
 def user_list(connection):
+    # Construct user list
     i = 1
     users = "User List:\n"
     for client in clients.values():
