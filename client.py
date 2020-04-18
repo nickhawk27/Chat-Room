@@ -13,13 +13,16 @@ USERNAME = str(sys.argv[3])
 server.connect((IP, PORT))
 server.send(USERNAME)
 
+# Awaits information to receive or send
 while True:
     sockets_list = [sys.stdin, server]
     read_sockets, write_socket, error_socket = select.select(sockets_list, [], [])
     for socket in read_sockets:
+        # server distributes messages from other users
         if socket == server:
             message = socket.recv(2048)
             print(message)
+        # distributes a user created message
         else:
             message = sys.stdin.readline()
             server.send(message)
