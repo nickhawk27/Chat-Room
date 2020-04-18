@@ -78,9 +78,9 @@ def private_message(connection, message):
         else:
             break
     # Find user
-    for connection, username in clients.items():
+    for conn, username in clients.items():
         if username == recipient_name:
-            recipient = connection
+            recipient = conn
             break
     # Construct message for delivery
     direct_message = "<{}> (Private Message) {}".format(get_user(connection), message[i+1:len(message)-1])
